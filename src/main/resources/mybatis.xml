@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+    <environments default="standalone">
+        <environment id="standalone">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+                <property name="defaultAutoCommit" value="true"/>
+                <!--property name="poolMaximumActiveConnections" value="25"/-->
+                <!--property name="poolMaximumIdleConnections" value="5"/-->
+                <property name="poolMaximumActiveConnections" value="${poolMaximumActiveConnections}"/>
+                <property name="poolMaximumIdleConnections" value="${poolMaximumIdleConnections}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="db_mapper.xml"/>
+    </mappers>
+
+
+
+</configuration>

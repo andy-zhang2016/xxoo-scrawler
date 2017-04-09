@@ -1,0 +1,51 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="init_meta_mapper">
+
+    <resultMap type="com.xxoo.hotel.scrawller.db.CityInfo" id="CityInfo">
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="url" property="url" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="chineseName" property="chineseName" jdbcType="VARCHAR" />
+        <result column="englishName" property="englishName" jdbcType="VARCHAR" />
+        <result column="hotelCount" property="hotelCount" jdbcType="INTEGER" />
+
+    </resultMap>
+
+    <resultMap type="com.xxoo.hotel.scrawller.db.HotelInfo" id="HotelInfo">
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="url" property="url" jdbcType="VARCHAR" />
+        <result column="cityId" property="cityId" jdbcType="VARCHAR" />
+        <result column="chineseName" property="chineseName" jdbcType="VARCHAR" />
+        <result column="englishName" property="englishName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="InsertCity" keyColumn="id"
+            keyProperty="id">
+        insert into xxoo.ctrip_cities(id, url, province, chineseName，englishName，hotelCount )
+        VALUES (
+        #{id, jdbcType=VARCHAR},
+        #{url, jdbcType=VARCHAR},
+        #{province, jdbcType=VARCHAR},
+        #{chineseName, jdbcType=VARCHAR}，
+        #{englishName, jdbcType=VARCHAR}，
+        #{hotelCount, jdbcType=INTEGER}）
+    </insert>
+
+    <insert id="InsertHotel" keyColumn="id"
+            keyProperty="id">
+        insert into xxoo.ctrip_hotels(id, url, cityId, chineseName，englishName)
+        VALUES (
+        #{id, jdbcType=VARCHAR},
+        #{url, jdbcType=VARCHAR},
+        #{cityId, jdbcType=VARCHAR},
+        #{chineseName, jdbcType=VARCHAR}，
+        #{englishName, jdbcType=VARCHAR})
+    </insert>
+
+
+
+</mapper>
