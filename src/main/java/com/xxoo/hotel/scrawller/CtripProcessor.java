@@ -53,8 +53,9 @@ public class CtripProcessor implements PageProcessor{
         String regx=ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.START_URL_regex");
         if(page.getUrl().regex(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.START_URL_regex")).match()) {
             page.addTargetRequests(removeDuplicate(page.getHtml().xpath(
-                    ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.citylist")).links().
-                    regex(URL_LIST).all()));
+                    ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.city_list")).links().
+                    regex(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.URL_LIST_regex")).all()));
+            page.setSkip(true);  //pipeline不需要处理首页的信息
         }
         else {
             //城市酒店列表页
@@ -64,11 +65,27 @@ public class CtripProcessor implements PageProcessor{
                 List<String> l_post = page.getHtml().xpath(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.city.hotel_url_list"))
                         .links().regex(URL_POST).all(); //当前城市页的酒店url列表
                 page.addTargetRequests(removeDuplicate(l_post));
-                //如果是首页，还需要将后面翻页的信息加进来
+                //如果是城市的首页，将当前城市的信息加入到pipeline，同时，还需要将后面翻页的信息加进来
                 if(page.getUrl().regex(URL_LIST).match()) {
 
+                    String url = page.getUrl().toString();
+                    int index = url.lastIndexOf("/");
+                    String cityId = url.substring(index + 1);
+
+                    page.putField("cityURL", url);
+                    page.putField("cityId", cityId);
+                    page.putField("City_EN_Name", cityId.split("[1-9]\\d{1}")[0] );
+                    page.putField("hotelCount", Integer.parseInt(page.getHtml().xpath(
+                            ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.city.hotel_count")).get()));
+
+                    String location = page.getHtml().xpath(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.city.location")).toString();
+                    //提取省名和城市中文名
+                    page.putField("province", location.split(";")[0].split("=")[1]);
+                    page.putField("City_CN_Name", location.split(";")[1].split("=")[1]);
+
                     //如果有多页，先计算最后一页的页号
-                    int lastPage = Integer.parseInt(page.getHtml().xpath(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.city.total_list_page_number")).get());
+                    int lastPage = Integer.parseInt(page.getHtml().xpath(
+                            ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.city.total_list_page_number")).get());
 
                     if(lastPage>1){
                         List<String> l_url = new ArrayList<String>();
@@ -81,13 +98,30 @@ public class CtripProcessor implements PageProcessor{
                     }
 
                 }
+                else
+                    //pipeline不需要处理同城市的翻页信息
+                    page.setSkip(true);
+                System.out.println();
                 //酒店详情页
             } else {
                 String ChineseName = page.getHtml().xpath(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.city.hotel.ChineseName")).toString();
                 String EnglishName = page.getHtml().xpath(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.city.hotel.EnglishName")).toString();
+
+                String url = page.getUrl().toString();
+                int s_index = url.lastIndexOf("/");
+                int e_index = url.lastIndexOf(".html");
+                page.putField("hotel_id", Integer.parseInt(url.substring(s_index + 1, e_index)));
                 page.putField("hotel_url", page.getUrl().toString());
                 page.putField("hotel_cn_name",ChineseName);
                 page.putField("hotel_en_name",EnglishName.trim());
+
+                //找出所在城市
+                url= page.getHtml().xpath(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.xpath.city.hotel.city_url_in")).
+                        links().regex(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.URL_LIST_regex")).get();
+                s_index = url.lastIndexOf("/");
+                page.putField("hotel_CityId", url.substring(s_index + 1));
+
+
                 System.out.println();
             }
         }
@@ -104,15 +138,15 @@ public class CtripProcessor implements PageProcessor{
 
     public static void main(String[] args) {
 
-        SpikeFileCacheQueueScheduler file=new SpikeFileCacheQueueScheduler("/Users/andy/ctrip_tmp/");
+        SpikeFileCacheQueueScheduler file=new SpikeFileCacheQueueScheduler(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.queueSchedulerDir"));
         file.setRegx(START_URL);
 
         Spider.create(new CtripProcessor())
-                .addUrl("http://hotels.ctrip.com/domestic-city-hotel.html")	//开始地址
+                .addUrl(ConfigLoader.getConf().getString("scrawllers.ctrip.domestic.start_url"))	//开始地址
                 .addPipeline(new ConsolePipeline())	//打印到控制台
                 .addPipeline(new DBPipeLine()) //写入数据库
                 .setScheduler(file) //支持重启
-                .thread(5)	//开启5线程
+                .thread(ConfigLoader.getConf().getInt("scrawllers.ctrip.domestic.thread_number"))	//开启多线程
                 .run();
     }
 

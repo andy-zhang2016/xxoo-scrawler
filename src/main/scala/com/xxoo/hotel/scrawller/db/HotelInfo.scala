@@ -2,8 +2,8 @@ package com.xxoo.hotel.scrawller.db
 
 
 class HotelInfo {
-  var id: String = _
-  def getId: String = id
+  var id: Integer = _
+  def getId: Integer = id
 
   var englishName: String = _
   def getEnglishName: String = englishName
@@ -21,7 +21,7 @@ class HotelInfo {
 object HotelInfo
 {
   def apply (
-              id: String,
+              id: Integer,
               englishName: String,
               chineseName: String,
               url: String,
