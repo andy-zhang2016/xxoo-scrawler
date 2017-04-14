@@ -1,8 +1,5 @@
 package com.xxoo.hotel.scrawller.db
 
-import java.sql.{Blob => SqlBlob, Timestamp => SqlTimestamp}
-
-import com.sun.crypto.provider.AESCipher.AES128_CBC_NoPadding
 
 class HotelInfo {
   var id: String = _

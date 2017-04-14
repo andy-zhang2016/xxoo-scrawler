@@ -4,8 +4,6 @@ import java.io.Reader
 
 import org.apache.ibatis.io.Resources
 import org.apache.ibatis.session.{SqlSession, SqlSessionFactory, SqlSessionFactoryBuilder}
-import org.eclipse.jetty.util.security.Password
-import com.xxoo.hotel.scrawller.utils._
 import com.xxoo.hotel.scrawller.utils.ConfigLoader
 
 object SessionFactory {

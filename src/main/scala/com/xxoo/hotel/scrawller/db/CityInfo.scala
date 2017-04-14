@@ -41,5 +41,7 @@ object CityInfo
     CityInfoObj.url = url
     CityInfoObj.hotelCount = hotelCount
 
+    CityInfoObj
+
   }
 }
