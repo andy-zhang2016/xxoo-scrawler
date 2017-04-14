@@ -19,7 +19,7 @@ public class CtripSpiderMonitor {
             file.setRegx("");
 
             Spider ctripSpider = Spider.create(new CtripProcessor())
-                    .addUrl("http://hotels.ctrip.com/hotel/anqing177")	//开始地址
+                    .addUrl("http://hotels.ctrip.com/domestic-city-hotel.html")	//开始地址
                     .addPipeline(new ConsolePipeline())	//打印到控制台
                     .addPipeline(new DBPipeLine()) //写入数据库
                     .setScheduler(file)

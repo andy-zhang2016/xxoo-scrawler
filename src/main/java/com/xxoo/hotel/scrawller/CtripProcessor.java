@@ -108,7 +108,7 @@ public class CtripProcessor implements PageProcessor{
         file.setRegx(START_URL);
 
         Spider.create(new CtripProcessor())
-                .addUrl("http://hotels.ctrip.com/hotel/xuanhua1497")	//开始地址
+                .addUrl("http://hotels.ctrip.com/domestic-city-hotel.html")	//开始地址
                 .addPipeline(new ConsolePipeline())	//打印到控制台
                 .addPipeline(new DBPipeLine()) //写入数据库
                 .setScheduler(file) //支持重启
