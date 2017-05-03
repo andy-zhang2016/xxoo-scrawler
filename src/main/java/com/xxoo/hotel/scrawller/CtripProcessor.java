@@ -17,7 +17,7 @@ import com.xxoo.hotel.scrawller.utils.DBPipeLine;
 
 /**
  *
- * @author ReverieNight@Foxmail.com
+ * @author topweltch@126.com
  *
  */
 public class CtripProcessor implements PageProcessor{
